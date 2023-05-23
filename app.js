@@ -20,11 +20,15 @@ app.get("/", async (_, res) => {
     // List blobs in the container
     const blobs = [];
     const base64 = [];
+    const texts = [];
     for await (const blob of containerClient.listBlobsFlat()) {
       const blobClient = containerClient.getBlobClient(blob.name);
       const buffer = await blobClient.downloadToBuffer();
       if (blob.name.lastIndexOf(".jpg") > -1) {
         base64.push(buffer.toString("base64"));
+      }
+      if (blob.name.lastIndexOf(".txt") > -1) {
+        texts.push(buffer.toString());
       }
       blobs.push(blob.name);
     }
@@ -36,6 +40,7 @@ app.get("/", async (_, res) => {
 ${blobs.map((blob) => `<li>${blob}</li>`).join("")}
 </ul>
 ${base64.map((base) => `<img src="data:image/jpg;base64,${base}" />`).join("")}
+${texts.map((text) => `<p>${text}</p>`).join("")}
 `);
   } catch (error) {
     console.error(error);
