@@ -32,16 +32,26 @@ app.get("/", async (_, res) => {
       }
       blobs.push(blob.name);
     }
-    // const imagehtml = `<img src="data:image/jpg;base64,${base64}" />`;
-    res.send(`
-<h1>Azure Storage AD integration example</h1>
-<h2>Blobs in ${containerName} container:</h2>
-<ul>
-${blobs.map((blob) => `<li>${blob}</li>`).join("")}
-</ul>
-${base64.map((base) => `<img src="data:image/jpg;base64,${base}" />`).join("")}
-${texts.map((text) => `<p>${text}</p>`).join("")}
-`);
+
+    const html = `
+    <h1>Azure Storage AD integration example</h1>
+    <h2>Blobs in ${containerName} container:</h2>
+    <ul>
+    ${blobs.map((blob) => `<li>${blob}</li>`).join("")}
+    </ul>
+    ${base64
+      .map(
+        (base) =>
+          `<img 
+            aria-label="For screen readers" 
+            alt="Alternative text"
+            src="data:image/jpg;base64,${base}" />`
+      )
+      .join("")}
+    ${texts.map((text) => `<p>${text}</p>`).join("")}
+    `;
+
+    res.send(html);
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred");
